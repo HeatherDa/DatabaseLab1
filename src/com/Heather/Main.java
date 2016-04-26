@@ -4,11 +4,11 @@ import java.sql.*;
 import java.util.*;
 
 public class Main {
-    static final String JDBC_DRIVER = "jdbc:mysql://localhost:3306/";
-    static final String DB_CONNECTION_URL = "cube";
+    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+    static final String DB_CONNECTION_URL = "jdbc:mysql://localhost:3306/cube";
 
-    static final String USER = "root";
-    static final String PASSWORD = "itecitec";
+    static final String USER = "Heather";
+    static final String PASSWORD = "ashlynn8";
     static Scanner scan=new Scanner(System.in);
 
     public static void main(String[] args) throws Exception{

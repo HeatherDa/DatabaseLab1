@@ -121,7 +121,7 @@ public class Main {
                 psChange.setDouble(1,newTiming);
                 psChange.setString(2,solverName);
                 psChange.executeUpdate();
-                System.out.println("do you want to change another entry?");//it's not getting here.
+                System.out.println("do you want to change another entry?");
                 String chan=scan4.nextLine();
                 if (!chan.equalsIgnoreCase("y")){
                     changeIt=false;

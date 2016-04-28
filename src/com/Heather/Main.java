@@ -1,9 +1,5 @@
 package com.Heather;
-
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
-import jdk.nashorn.internal.objects.annotations.Where;
-
-import javax.naming.directory.SearchResult;
 import java.sql.*;
 import java.util.*;
 
@@ -50,31 +46,27 @@ public class Main {
             String seSolver="SELECT * FROM rubikscube WHERE Solver = ?";
             searchSolver= connect.prepareStatement(seSolver);
 
+            //store test data
+            HashMap<String, Double> testData=new HashMap<>();
+            testData.put("Cubestormer II robot",5.270);
+            testData.put("Fakhri Raihaan (using his feet)", 27.93);
+            testData.put("Ruxin Liu (age 3)", 99.33);
+            testData.put("Mats Valk (human record holder)", 6.27);
 
-            try {
-                HashMap<String, Double> testData=new HashMap<>();
-                testData.put("Cubestormer II robot",5.270);
-                testData.put("Fakhri Raihaan (using his feet)", 27.93);
-                testData.put("Ruxin Liu (age 3)", 99.33);
-                testData.put("Mats Valk (human record holder)", 6.27);
-                for(String s:testData.keySet()) {//s is each name in test data
-                    searchSolver.setString(1, s);
-                    ResultSet searchR = searchSolver.executeQuery();//look for an entry with this name
-                    int count=0;
-                    while (searchR.next()){
-                        count++;
-                    }
-                    if (count==0) {//if there is no entry, add it
-                        psInsert.setString(1, s);
-                        psInsert.setDouble(2, testData.get(s));
-                        psInsert.executeUpdate();
-                    }
+            //add test data to table
+            for(String s:testData.keySet()) {//s is each name in test data
+                searchSolver.setString(1, s);
+                ResultSet searchR = searchSolver.executeQuery();//look for an entry with this name
+                int count=0;
+                while (searchR.next()){
+                    count++;
                 }
-            }catch(MySQLIntegrityConstraintViolationException ex){
-                System.out.print("");
+                if (count==0) {//if there is no entry, add it
+                    psInsert.setString(1, s);
+                    psInsert.setDouble(2, testData.get(s));
+                    psInsert.executeUpdate();
+                }
             }
-
-
 
             //adding a new entry to table
 
@@ -125,7 +117,6 @@ public class Main {
             String prepStatementChange="UPDATE rubikscube SET Solving_time=(?) WHERE Solver=(?)";
             psChange=connect.prepareStatement(prepStatementChange);
             while(changeIt) {
-                results = statement.executeQuery("SELECT * FROM rubikscube");
                 System.out.println("What is the name of the person who's record needs to be updated?");
                 solverName = scan4.nextLine();
                 System.out.println("How many seconds did it take?");
@@ -155,6 +146,13 @@ public class Main {
                     psChange.close();
                 }
             }catch(SQLException se){
+                se.printStackTrace();
+            }
+            try{
+                if(searchSolver !=null) {
+                    searchSolver.close();
+                }
+            }catch (SQLException se){
                 se.printStackTrace();
             }
             try{

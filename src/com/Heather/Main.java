@@ -33,16 +33,14 @@ public class Main {
 
         try {
             connect = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
-            System.out.println("is there really a connection? "+connect);//yes there is
             statement = connect.createStatement();
-            System.out.println("is there really a statemnt? "+statement);//yes there is
-
-
+            //make new table
             String newTable="CREATE TABLE IF NOT EXISTS rubikscube (Solver varchar (50)UNIQUE , Solving_time double)";
             statement.executeUpdate(newTable);
-            System.out.println("I made a rubikscube table");//doesn't get here
+            //get prepared statement for insert ready
             String prepStatementInsert="INSERT INTO rubikscube VALUES(?,?)";
             psInsert=connect.prepareStatement(prepStatementInsert);
+            //get prepared statement for search ready
             String seSolver="SELECT * FROM rubikscube WHERE Solver = ?";
             searchSolver= connect.prepareStatement(seSolver);
 
@@ -82,8 +80,8 @@ public class Main {
             while (entry) {
                 System.out.println("What is the solver's name?");
                 solveName = scan2.nextLine();
-                System.out.println("How many seconds did it take?");
-                timing = scan.nextDouble();//TODO verify correct input
+                String b="How many seconds did it take?";
+                timing = testDoub(b);
                 searchSolver.setString(1, solveName);
                 ResultSet searchR = searchSolver.executeQuery();//look for an entry with this name
                 int resultsCounter=0;
@@ -113,14 +111,13 @@ public class Main {
             }
             String solverName;
             Double newTiming;
-            ResultSet results = null;
             String prepStatementChange="UPDATE rubikscube SET Solving_time=(?) WHERE Solver=(?)";
             psChange=connect.prepareStatement(prepStatementChange);
             while(changeIt) {
                 System.out.println("What is the name of the person who's record needs to be updated?");
                 solverName = scan4.nextLine();
-                System.out.println("How many seconds did it take?");
-                newTiming = scan3.nextDouble();//TODO verify correct input
+                String a="How many seconds did it take?";
+                newTiming = testDoub(a);
                 psChange.setDouble(1,newTiming);
                 psChange.setString(2,solverName);
                 psChange.executeUpdate();
@@ -173,5 +170,24 @@ public class Main {
         }
         System.out.println("Program finished");
 
+    }
+    public static double testDoub(String printPrompt){
+        Scanner scanDoub=new Scanner (System.in);
+        boolean isdoub;
+        double next=0.0;
+        do {//test for correct input
+            System.out.println(printPrompt);
+
+
+            if (scanDoub.hasNextDouble()) {
+                next = scanDoub.nextDouble();
+                isdoub = true;
+            } else {
+                System.out.println("Not a valid choice.  Please type a double.");
+                isdoub = false;
+                scanDoub.next();
+            }
+        } while (!(isdoub));
+        return next;
     }
 }

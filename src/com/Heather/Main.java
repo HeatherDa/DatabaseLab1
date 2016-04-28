@@ -1,5 +1,7 @@
 package com.Heather;
 
+import jdk.nashorn.internal.objects.annotations.Where;
+
 import java.sql.*;
 import java.util.*;
 
@@ -9,7 +11,10 @@ public class Main {
 
     static final String USER = "Heather";
     static final String PASSWORD = "ashlynn8";
-    static Scanner scan=new Scanner(System.in);
+    static Scanner scan=new Scanner(System.in);//why didn't it work with one scanner?  I couldn't get it working with less than 4!
+    static Scanner scan2=new Scanner(System.in);
+    static Scanner scan3=new Scanner(System.in);
+    static Scanner scan4=new Scanner(System.in);
 
     public static void main(String[] args) {
 	// write your code here
@@ -40,23 +45,52 @@ public class Main {
             statement.executeUpdate("INSERT INTO rubikscube VALUES ('Ruxin Liu (age 3)', 99.33)");
             statement.executeUpdate("INSERT INTO rubikscube VALUES ('Mats Valk (human record holder)', 6.27)");
 
-            ResultSet results = statement.executeQuery("SELECT * FROM rubikscube");
-            while (results.next()) {
-                String solver = results.getString("Solver");
-                Double time = results.getDouble("Solving_time");
-                System.out.println("Solver of Rubik's Cube= " + solver + " Time in seconds to solve= " + time);
-            }
-            System.out.println("Do you want to add a new entry?  Type y for yes.");
+            //adding a new entry to table
+            System.out.println("Do you want to add a new entry?  Type y for yes and n for no.");
             String new_entry = scan.nextLine();
-            String name;
+            boolean entry=false;
+            if (new_entry.equalsIgnoreCase("y")){//does the person want to add an entry?
+                entry=true;
+            }
+            String solveName;
             Double timing;
-            if (new_entry.equals("y")) {
+
+            while(entry){
                 System.out.println("What is the solver's name?");
-                name = scan.nextLine();
+                solveName = scan2.nextLine();
                 System.out.println("How many seconds did it take?");
                 timing = scan.nextDouble();//TODO verify correct input
-                statement.execute("INSERT INTO rubikscube VALUES (Solver, Solving_time)");
+                statement.executeUpdate("INSERT INTO rubikscube VALUES ('"+solveName+"', '"+timing+"')");//not adding entry
+                System.out.println("Do you want to make another entry?");
+                String con=scan2.nextLine();
+                if (!con.equalsIgnoreCase("y")){//set entry false to exit loop
+                    entry=false;
+                }
             }
+            //changing an entry for the table
+            System.out.println("Do you want to change an entry?  Type y for yes and n for no.");
+            String change = scan3.nextLine();
+            boolean changeIt=false;
+            if (change.equalsIgnoreCase("y")){//does the person want to change an entry?
+                changeIt=true;
+            }
+            String solverName;
+            Double newTiming;
+            ResultSet results = null;
+            while(changeIt) {
+                results = statement.executeQuery("SELECT * FROM rubikscube");
+                System.out.println("What is the name of the person who's record needs to be updated?");
+                solverName = scan4.nextLine();
+                System.out.println("How many seconds did it take?");
+                newTiming = scan3.nextDouble();//TODO verify correct input
+                statement.executeUpdate("UPDATE rubikscube SET Solving_time='"+newTiming+"' WHERE Solver='"+solverName+"'");
+                System.out.println("do you want to change another entry?");//it's not getting here.
+                String chan=scan4.nextLine();
+                if (!chan.equalsIgnoreCase("y")){
+                    changeIt=false;
+                }
+            }
+
         }catch(SQLException se){
             se.printStackTrace();
         }finally{

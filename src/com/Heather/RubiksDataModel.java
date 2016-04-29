@@ -80,6 +80,7 @@ public class RubiksDataModel extends AbstractTableModel{
             return o.toString();
         }catch(SQLException se){
             System.out.println(se);
+            se.printStackTrace();
             return se.toString();
         }
     }

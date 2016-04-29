@@ -64,8 +64,9 @@ public class RubiksGUI extends JFrame {
                     System.out.println("Select a record to delete it.");//TODO replace with option pane
                     JOptionPane.showMessageDialog(rootPane, "Select a record to delete it.");
                 }else{//something is selected, so proceed with deletion
-                    Main.deleteEntry(String.valueOf(RubiksDataModel.getItemAt(currentRow,1)));//TODO make it work
-                }
+                    String name=Name.getText();
+                    Main.deleteEntry(String.valueOf(name));//TODO make it work
+                }//move selected row to absolute row and delete that row to delete a selected row
                 rubiksDataTableModel.updateResultSet(Main.getRs());
             }
         });

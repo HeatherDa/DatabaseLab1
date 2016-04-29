@@ -4,18 +4,17 @@ import javax.swing.table.AbstractTableModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- * Created by cryst on 4/28/2016.
- */
+
 public class RubiksDataModel extends AbstractTableModel{
 
-    private int rowCount=0;
-    private int colCount=0;
-    ResultSet resultSet;
+    private static int rowCount=0;
+    private static int colCount=0;
+    static ResultSet resultSet;
 
     public RubiksDataModel(ResultSet results){
-        this.resultSet=results;
+        resultSet=results;
         setup();
+        Main.addTestData();
     }
 
     private void setup(){
@@ -24,12 +23,14 @@ public class RubiksDataModel extends AbstractTableModel{
             colCount=resultSet.getMetaData().getColumnCount();
         }catch(SQLException se){
             System.out.println("Couldn't count Columns "+ se);
+            se.printStackTrace();
         }
     }
 
     public void updateResultSet(ResultSet newRS){
         resultSet=newRS;
         setup();
+        fireTableDataChanged(); //this would make the table refresh, but it won't work because it's not static
     }
 
     private void countRows() {
@@ -56,11 +57,23 @@ public class RubiksDataModel extends AbstractTableModel{
     }
     @Override
     public int getColumnCount(){
-        getColumnCount();
+        //something, don't really need this
         return colCount;
     }
     @Override
-    public Object getValueAt(int row, int col){
+    public Object getValueAt(int row, int col){//wanted to use this instead of getItemAt, but making it static made it not override.
+        try{
+            resultSet.absolute(row+1);
+            Object o=resultSet.getObject(col+1);
+            return o.toString();
+        }catch(SQLException se){
+            System.out.println(se);
+            se.printStackTrace();
+            return se.toString();
+
+        }
+    }
+    public static Object getItemAt(int row, int col){
         try{
             resultSet.absolute(row+1);
             Object o=resultSet.getObject(col+1);

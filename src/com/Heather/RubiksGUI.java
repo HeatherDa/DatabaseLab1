@@ -5,10 +5,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowListener;
+import java.awt.geom.Arc2D;
 
-/**
- * Created by cryst on 4/28/2016.
- */
+
 public class RubiksGUI extends JFrame {
     private JPanel rootPanel;
     private JTextField Name;
@@ -17,6 +16,7 @@ public class RubiksGUI extends JFrame {
     private JButton deleteButton;
     private JButton exitButton;
     private JTable rubikscubeTable;
+    private JButton addButton;
 
     boolean editEntry=true;
 
@@ -35,22 +35,47 @@ public class RubiksGUI extends JFrame {
         if(currentRow !=-1){
             editEntry=true;
         }
-
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name=Name.getText();
+                double timming= Double.parseDouble(time.getText());
+                Main.addEntry(name, timming);//TODO figure out how to throw up an option screen if there is a record with this name already.
+                rubiksDataTableModel.updateResultSet(Main.getRs());
+            }
+        });
 
         updateEntryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!editEntry){//not editing an entry, so adding one
-                    Main.addEntry();
-                }else{//editEntry is true, so changing an existing entry
-
-                }
-
-                //get selection from JTable
-                //if
+                String name=Name.getText();
+                Double newTime=Double.parseDouble(time.getText());
+                Main.editEntry(name, newTime);
+                rubikscubeTable.clearSelection();
+                Name.setText("");
+                time.setText("");
+                rubiksDataTableModel.updateResultSet(Main.getRs());
             }
         });
-
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!editEntry) {//nothing selected, can't delete anything
+                    System.out.println("Select a record to delete it.");//TODO replace with option pane
+                    JOptionPane.showMessageDialog(rootPane, "Select a record to delete it.");
+                }else{//something is selected, so proceed with deletion
+                    Main.deleteEntry(String.valueOf(RubiksDataModel.getItemAt(currentRow,1)));//TODO make it work
+                }
+                rubiksDataTableModel.updateResultSet(Main.getRs());
+            }
+        });
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.shutDown();
+                System.exit(0);
+            }
+        });
 
 
 
